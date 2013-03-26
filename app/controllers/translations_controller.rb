@@ -23,7 +23,7 @@ class TranslationsController < ActionController::Base
 
   def update
     raise 'Do not use this page to update the default locale' if @locale == I18n.default_locale
-    raise 'Value cannot be blank' if (value = session[:translation][:value]).blank?
+    raise 'Value cannot be blank' if (value = params[:translation][:value]).blank?
     translation = I18n::Backend::ActiveRecord::Translation.find(params[:id])
     translation.update_attributes!(value: value,predefined: false)
     flash[:success] = "Key '#{translation.key}' updated for #{translation.locale}"
