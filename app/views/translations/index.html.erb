@@ -1,0 +1,41 @@
+<%= render :partial => 'stats' %>
+
+<%= form_tag translations_url do %>
+    <%= select_tag :locale, locale_options_for_select(I18n.available_locales, @locale) %>
+    <%= select_tag :translation_option,options_for_select(%w(translated untranslated unsourced),session[:translation_option]) %>
+    <%= hidden_field_tag :show_keys,'off' %><%= check_box_tag :show_keys,'on',session[:show_keys] == 'on' %> Show keys
+    <%= submit_tag 'Go' %>
+<% end %>
+
+<%= link_to 'Export to YAML',translations_url(locale: @locale,export: 'yaml') %>
+
+<% if flash[:success] %><p style="background-color: lightgreen; width: 100%;"><%= flash[:success] %></p><% end %>
+<% if flash[:error] %><p style="background-color: lightcoral; width: 100%;"><%= flash[:error] %></p><% end %>
+
+<% if @translations.empty? %>
+    <h3>No records for this criteria.</h3>
+<% end %>
+
+<% @translations.each do |translation| %>
+    <div id="<%= "translation_#{translation.class}_#{translation.id}" %>">
+      <%= form_for(translation, :as => :translation, :url => translation_update_path(translation), :remote => true) do |f| %>
+          <% if (default_translation = I18n::Backend::ActiveRecord::Translation.where(locale: I18n.default_locale).find_by_key(translation.key)) and session[:show_keys] == 'on' and default_translation.key != default_translation.value %>
+              <p style="font-style: italic; font-weight: bold;"><%= translation.key %>:</p>
+          <% end %>
+          <p><%= default_value = default_translation.try(:value) %></p>
+          <% if missing_params = check_for_missing_params(default_value,translation.value) %>
+              <% if translation.value.blank? %>
+                  <p style="background-color: gold; font-weight: bold;">
+                    NOTE: The translation below must include the following substitution parameter(s) from the original:
+              <% else %>
+                  <p style="background-color: red; color: white; font-weight: bold;">
+                    WARNING: The translation below is missing following substitution parameter(s) from the original:
+              <% end %>
+              <%= missing_params.collect{|param| "%{#{param}}"}.join(' ') %>
+              </p>
+          <% end %>
+          <p><%= f.text_field :value, :style => 'width: 90%;' %> <%= f.submit "Update" %></p>
+      <% end %>
+    </div>
+    <hr/>
+<% end %>

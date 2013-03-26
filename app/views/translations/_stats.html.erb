@@ -1,0 +1,16 @@
+<% translation_stats.each do |stat| %>
+    <div><%= name_for_locale(stat[:locale]) %></div>
+    <div style="width: <%= stat[:total] + stat[:missing] %>px;">
+        <div title="<%= stat[:untranslated] %> untranslated" style="background-color: red; width: <%= stat[:untranslated] %>px; float: left; cursor: pointer;" onclick="window.location = '<%= translations_url(:locale => stat[:locale],:translation_option => 'untranslated') %>'">&nbsp;</div>
+        <div title="<%= stat[:translated] %> translated" style="background-color: green; width: <%= stat[:translated] %>px; float: left; cursor: pointer;" onclick="window.location = '<%= translations_url(:locale => stat[:locale],:translation_option => 'translated') %>'">&nbsp;</div>
+        <div title="<%= stat[:missing] %> missing" style="background-color: gray; width: <%= stat[:missing] %>px; float: left;">&nbsp;</div>
+        <div style="clear: both;"></div>
+    </div>
+    <div style="width: <%= stat[:total] + stat[:missing] %>px;">
+        <div title="<%= stat[:unsourced] %> unsourced" style="background-color: yellow; width: <%= stat[:unsourced] %>px; float: left; cursor: pointer;" onclick="window.location = '<%= translations_url(:locale => stat[:locale],:translation_option => 'unsourced') %>'">&nbsp;</div>
+        <div title="<%= stat[:sourced] %> sourced" style="background-color: cyan; width: <%= stat[:sourced] %>px; float: left;">&nbsp;</div>
+        <div title="<%= stat[:missing] %> missing" style="background-color: gray; width: <%= stat[:missing] %>px; float: left;">&nbsp;</div>
+        <div style="clear: both;"></div>
+    </div>
+    <div>&nbsp;</div>
+<% end %>
