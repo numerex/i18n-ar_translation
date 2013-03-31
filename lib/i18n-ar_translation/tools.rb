@@ -21,7 +21,9 @@ module I18n
         (I18n::ArTranslation::Configuration.translation_locales - [:en]).each do |locale|
           puts "ADD PLACEHOLDERS FOR: #{locale}" if verbose
           I18n::Backend::ActiveRecord::Translation.where(locale: I18n.default_locale).each do |translation|
-            I18n::Backend::ActiveRecord::Translation.create!(locale: locale,key: translation.key)
+            placeholder = I18n::Backend::ActiveRecord::Translation.new(locale: locale,key: translation.key)
+            placeholder.interpolations = translation.interpolations
+            placeholder.save!
           end
 
           puts "ADD TRANSLATIONS FOR: #{locale}" if verbose

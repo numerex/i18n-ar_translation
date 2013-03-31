@@ -43,7 +43,7 @@ private
   end
 
   def translation_stats
-    @stats ||= [].tap do |stats|
+    session[:translation_stats] ||= [].tap do |stats|
       default_locale = I18n.default_locale
       stats << collect_counts(default_locale)
       I18n::Backend::ActiveRecord::Translation.where('locale != ?',default_locale)
