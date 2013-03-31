@@ -12,9 +12,12 @@ module I18n
           end
           if result.is_a?(I18n::MissingTranslation)
             if not options[:resolve] and (interpolations = options.except(*I18n::RESERVED_KEYS)).empty? or interpolations.keys.detect{|interpolation_key| key =~ /%\{#{interpolation_key}\}/}
-              translation = I18n::Backend::ActiveRecord::Translation.new(locale: locale,key: key,value: key)
-              translation.interpolations = interpolations.keys
-              translation.save!
+              unless I18n::Backend::ActiveRecord::Translation.locale(locale).find_by_key(key)
+                I18n.backend.backends.first.reload! # ensure that the an already-memoized translation is not remembered without its value
+                translation = I18n::Backend::ActiveRecord::Translation.new(locale: locale,key: key,value: key)
+                translation.interpolations = interpolations.keys
+                translation.save!
+              end
               result = interpolate(locale,key,interpolations)
             else
               throw(:exception, result)

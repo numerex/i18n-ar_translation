@@ -6,7 +6,10 @@ module I18n
 
       def self.reset_translations(verbose)
         puts 'BACKUP MISSING TRANSLATIONS...' if verbose
-        I18n::ArTranslation::Configuration.translation_locales.each{|locale| File.open(Rails.root + "config/translations/#{locale}.missing",'w'){|file| file.write generate_translation_yaml(locale,predefined: false)}}
+        I18n::ArTranslation::Configuration.translation_locales.each do |locale|
+          next if (translations = find_translations(locale,predefined: false)).empty?
+          File.open(Rails.root + "config/translations/#{locale}.missing",'w'){|file| file.write translations.to_yaml }
+        end
 
         puts 'TRUNCATE TRANSLATIONS...' if verbose
         ::ActiveRecord::Base.connection.execute 'truncate table translations'
@@ -88,10 +91,10 @@ module I18n
         dst
       end
 
-      def self.generate_translation_yaml(locale,conditions = nil)
+      def self.find_translations(locale,conditions = nil)
         scope = I18n::Backend::ActiveRecord::Translation.where(locale: locale).where('value is not null')
         scope = scope.where(conditions) if conditions
-        scope.all.collect{|translation| translation.attributes.slice('key','value')}.to_yaml
+        scope.all.collect{|translation| translation.attributes.slice('key','value')}
       end
 
     end
