@@ -32,7 +32,7 @@ module I18n
           puts "ADD TRANSLATIONS FOR: #{locale}" if verbose
           puts "... WARNING: translation file not found for #{locale}" and next unless File.exists?(path = Rails.root + "config/translations/#{locale}.yml")
           YAML.load_file(path).each do |tuple|
-            if translation = I18n::Backend::ActiveRecord::Translation.where(locale: locale,key: tuple['key']).first
+            if translation = I18n::Backend::ActiveRecord::Translation.locale(locale).lookup(tuple['key']).first
               puts "... FOUND:  #{tuple['key']}\n    VALUE:  #{tuple['value']}" if verbose
               translation.update_attributes!(value: tuple['value'])
             else
