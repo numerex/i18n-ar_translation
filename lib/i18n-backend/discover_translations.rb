@@ -20,7 +20,9 @@ module I18n
               end
               result = interpolate(locale,key,interpolations)
             else
+              #:nocov: remove when it's clear how to test for other exceptions
               throw(:exception, result)
+              #:nocov:
             end
           end
           result

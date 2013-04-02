@@ -1,3 +1,4 @@
+<a href="<%= translations_reset_stats_url %>">Reset Stats</a>
 <% translation_stats.each do |stat| %>
     <div><%= name_for_locale(stat[:locale]) %></div>
     <div style="width: <%= stat[:total] + stat[:missing] %>px;">

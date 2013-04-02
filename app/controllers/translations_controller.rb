@@ -1,4 +1,5 @@
 require 'i18n/backend/active_record'
+require 'i18n-ar_translation/stats'
 
 class TranslationsController < ActionController::Base
 
@@ -25,6 +26,9 @@ class TranslationsController < ActionController::Base
     raise 'Do not use this page to update the default locale' if @locale == I18n.default_locale
     raise 'Value cannot be blank' if (value = params[:translation][:value]).blank?
     translation = I18n::Backend::ActiveRecord::Translation.find(params[:id])
+    if (default_translation = I18n::Backend::ActiveRecord::Translation.locale(I18n.default_locale).lookup(translation.key).first) and (missing_params = check_for_missing_params(default_translation.value,value))
+      raise "Value is missing required interpolation parameters: #{missing_params.join(', ')}"
+    end
     translation.value = value
     translation.predefined = false
     translation.save!
@@ -32,6 +36,11 @@ class TranslationsController < ActionController::Base
   rescue
     flash[:error] = $!.to_s
   ensure
+    redirect_to action: 'index',translation_option: session[:translation_option]
+  end
+
+  def reset_stats
+    session[:translation_stats] = nil
     redirect_to action: 'index',translation_option: session[:translation_option]
   end
 
@@ -45,24 +54,7 @@ private
   end
 
   def translation_stats
-    session[:translation_stats] ||= [].tap do |stats|
-      default_locale = I18n.default_locale
-      stats << collect_counts(default_locale)
-      I18n::Backend::ActiveRecord::Translation.where('locale != ?',default_locale)
-      (I18n.available_locales - [default_locale]).each{|locale| stats << collect_counts(locale)}
-      max_total = stats.collect{|stat| stat[:total]}.max
-      stats.each{|stat| stat[:missing] = max_total - stat[:total]}
-    end
-  end
-
-  def collect_counts(locale)
-    scope = I18n::Backend::ActiveRecord::Translation.where(locale: locale)
-    total = scope.count
-    untranslated = scope.where(value: nil).count
-    translated = total - untranslated
-    unsourced = scope.where(predefined: 0).count
-    sourced = total - unsourced
-    {:locale => locale, :total => total, :translated => translated, :untranslated => untranslated, :unsourced => unsourced, :sourced => sourced}
+    session[:translation_stats] ||= I18n::ArTranslation::Stats.collect_stats
   end
 
   def find_locale
