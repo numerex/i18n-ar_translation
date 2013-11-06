@@ -4,15 +4,21 @@ module I18n
 
     module Tools
 
-      def self.reset_translations(verbose)
+      def self.reset_translations(verbose,truncate = true)
         puts 'BACKUP MISSING TRANSLATIONS...' if verbose
         I18n::ArTranslation::Configuration.translation_locales.each do |locale|
           next if (translations = find_translations(locale,predefined: false)).empty?
           File.open(Rails.root + "config/translations/#{locale}.missing",'w'){|file| file.write translations.to_yaml }
         end
 
-        puts 'TRUNCATE TRANSLATIONS...' if verbose
-        ::ActiveRecord::Base.connection.execute 'truncate table translations'
+        # NOTE -- truncation will reset the auto-increment ID and is desirable operationally, but it is not recoverable for transactions, so messes up testing
+        if truncate
+          puts 'TRUNCATE TRANSLATIONS...' if verbose
+          ::ActiveRecord::Base.connection.execute 'truncate table translations'
+        else
+          puts 'DELETE TRANSLATIONS...' if verbose
+          I18n::Backend::ActiveRecord::Translation.delete_all
+        end
 
         I18n.locale = I18n.default_locale
         collect_possible_translations(verbose).sort.each_with_index do |key,index|
