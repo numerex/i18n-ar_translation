@@ -18,7 +18,7 @@
 
 <% @translations.each do |translation| %>
     <div id="<%= "translation_#{translation.class}_#{translation.id}" %>">
-      <%= form_for(translation, :as => :translation, :url => translation_update_path(translation), :remote => true) do |f| %>
+      <%= form_for(translation, :as => :translation, :url => translation_update_path(translation), :remote => true, :method => "patch") do |f| %>
           <% if (default_translation = I18n::Backend::ActiveRecord::Translation.where(locale: I18n.default_locale).find_by_key(translation.key)) and session[:show_keys] == 'on' and default_translation.key != default_translation.value %>
               <p style="font-style: italic; font-weight: bold;"><%= translation.key %>:</p>
           <% end %>
