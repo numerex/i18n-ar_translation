@@ -17,9 +17,3 @@ ActiveRecord::Schema.define(version: 1) do
     t.string :name
   end
 end
-
-class TestModel < ActiveRecord::Base
-
-  validates_presence_of :name
-
-end

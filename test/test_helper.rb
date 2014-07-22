@@ -1,5 +1,7 @@
 ENV['RAILS_ENV'] = 'test'
 
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require "rails/test_help"
 require 'rubygems'
 require 'bundler/setup'
 require 'shoulda'
@@ -16,17 +18,7 @@ begin; require 'turn'; rescue LoadError; end
 
 require 'rails'
 
-class Application < Rails::Application
-end
-
-Application.configure do
-  config.active_support.deprecation = :log
-  config.root = File.dirname(__FILE__) + '/..'
-end
-
-Application.initialize!
-
-load File.dirname(__FILE__) + '/support/models.rb'
+load File.dirname(__FILE__) + '/support/migration.rb'
 load File.dirname(__FILE__) + '/support/locale.rb'
 
 require 'i18n-ar_translation'
