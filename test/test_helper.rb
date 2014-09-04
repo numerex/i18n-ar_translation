@@ -23,6 +23,20 @@ load File.dirname(__FILE__) + '/support/locale.rb'
 
 require 'i18n-ar_translation'
 
+require "minitest/reporters"
+if ENV["IS_BAMBOO"]
+  Minitest::Reporters.use! Minitest::Reporters::JUnitReporter.new
+else
+  Minitest::Reporters.use! [
+    Minitest::Reporters::DefaultReporter.new(
+      :color => true,
+      slow_count: 10,
+      :slow_suite_count => 5,
+      :fast_fail => true
+    )
+  ]
+end
+
 class ActiveSupport::TestCase
 
   use_transactional_fixtures = true
