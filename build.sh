@@ -9,4 +9,7 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]]
 fi
 
 bundle install
-bundle exec rake test
+bundle update
+bundle exec appraisal clean
+bundle exec appraisal install
+bundle exec appraisal rake test

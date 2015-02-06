@@ -3,12 +3,14 @@
 .bundle
 .config
 .yardoc
-InstalledFiles
 _yardoc
 coverage
 doc/
-log/
+Gemfile.lock
+gemfiles/*gemfile.lock
+InstalledFiles
 lib/bundler/man
+log/
 pkg
 rdoc
 spec/reports
