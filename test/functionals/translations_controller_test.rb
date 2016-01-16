@@ -70,7 +70,7 @@ class TranslationsControllerTest < ActionController::TestCase
   test 'do not replace translations for the default locale' do
     translation = I18n::Backend::ActiveRecord::Translation.create!(locale: 'en',key: 'One translated',value: 'One translated')
 
-    get :update,id: translation.id
+    patch :update, id: translation.id
     assert_redirected_to translations_path
     assert_equal '',flash[:success].to_s
     assert_equal 'Do not use this page to update the default locale',flash[:error].to_s
@@ -79,7 +79,7 @@ class TranslationsControllerTest < ActionController::TestCase
   test 'value cannot be blank' do
     translation = I18n::Backend::ActiveRecord::Translation.create!(locale: 'es',key: 'One translated')
 
-    get :update,id: translation.id,locale: 'es',translation:{}
+    patch :update, id: translation.id, locale: 'es', translation: {}
     assert_redirected_to translations_path
     assert_equal '',flash[:success].to_s
     assert_equal 'Value cannot be blank',flash[:error].to_s
@@ -90,7 +90,7 @@ class TranslationsControllerTest < ActionController::TestCase
     I18n::Backend::ActiveRecord::Translation.create!(locale: 'en',key: key,value: key)
     translation = I18n::Backend::ActiveRecord::Translation.create!(locale: 'es',key: key)
 
-    get :update,id: translation.id,locale: 'es',translation:{value: 'Un traducido con opcion %{test1}'}
+    patch :update, id: translation.id, locale: 'es', translation: { value: 'Un traducido con opcion %{test1}' }
     assert_redirected_to translations_path
     assert_equal '',flash[:success].to_s
     assert_equal 'Value is missing required interpolation parameters: test2',flash[:error].to_s
@@ -101,7 +101,7 @@ class TranslationsControllerTest < ActionController::TestCase
     I18n::Backend::ActiveRecord::Translation.create!(locale: 'en',key: key,value: key)
     translation = I18n::Backend::ActiveRecord::Translation.create!(locale: 'es',key: key)
 
-    get :update,id: translation.id,locale: 'es',translation:{value: 'Un traducido con opcion %{test}'}
+    patch :update, id: translation.id, locale: 'es', translation: { value: 'Un traducido con opcion %{test}' }
     assert_redirected_to translations_path
     assert_equal "Key '#{key}' updated for es",flash[:success].to_s
     assert_equal '',flash[:error].to_s

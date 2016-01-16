@@ -100,7 +100,7 @@ module I18n
       def self.find_translations(locale,conditions = nil)
         scope = I18n::Backend::ActiveRecord::Translation.where(locale: locale).where('value is not null')
         scope = scope.where(conditions) if conditions
-        scope.all.collect{|translation| translation.attributes.slice('key','value')}
+        scope.to_a.collect { |translation| translation.attributes.slice('key', 'value') }
       end
 
     end
