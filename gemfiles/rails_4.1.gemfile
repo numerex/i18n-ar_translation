@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "i18n-active_record", :git => "git://github.com/numerex/i18n-active_record.git", :require => "i18n/active_record", :branch => "rails-4"
+gem "i18n-active_record", :git => "git://github.com/numerex/i18n-active_record.git", :require => "i18n/active_record"
 gem "appraisal"
 gem "test-unit"
 gem "minitest"

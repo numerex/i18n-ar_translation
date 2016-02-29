@@ -24,7 +24,7 @@ class TranslationsController < ActionController::Base
 
   def update
     raise 'Do not use this page to update the default locale' if @locale == I18n.default_locale
-    raise 'Value cannot be blank' if (value = params[:translation][:value]).blank?
+    raise 'Value cannot be blank' if (value = params[:translation] && params[:translation][:value]).blank?
     translation = I18n::Backend::ActiveRecord::Translation.find(params[:id])
     if (default_translation = I18n::Backend::ActiveRecord::Translation.locale(I18n.default_locale).lookup(translation.key).first) and (missing_params = check_for_missing_params(default_translation.value,value))
       raise "Value is missing required interpolation parameters: #{missing_params.join(', ')}"

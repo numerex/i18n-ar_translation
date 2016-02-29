@@ -5,10 +5,6 @@ class TranslationsControllerTest < ActionController::TestCase
   def setup
     I18n::Backend::ActiveRecord::Translation.delete_all
     TranslationsController.send(:include,Rails.application.routes.url_helpers)
-    @controller = TranslationsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-    @routes     = Rails.application.routes
   end
 
   test 'should get index' do

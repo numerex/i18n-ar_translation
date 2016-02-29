@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = %w(lib)
 
-  gem.add_dependency 'rails', '~> 4.0'
+  gem.add_dependency 'rails', '> 4.0', '< 5.1'
   gem.add_dependency 'i18n-active_record'
 
 end
